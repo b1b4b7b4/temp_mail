@@ -56,3 +56,16 @@ let message = email.get_message_by_id(id).await?
 ```rust
 email.download_attachment(message.id, message.attachments[0].filename.clone(),"file.extension".into()).await?; // not working for images for now
 ```
+
+## Get available domains
+
+```rust
+let domains = TempMail::get_domains().await?;
+```
+
+## Get random adresses
+
+```rust
+let adresses = TempMail::get_adresses(Some(10)).await?;
+let adresses = TempMail::get_adresses(None).await?; // returns 1 adress
+```
