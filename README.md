@@ -15,7 +15,7 @@ let mut email2 = TempMail::from_string("myemail@something.com").await?;
 
 ```
 
-than you can retrieve:
+now you can retrieve:
 
 ## Email address
 
