@@ -104,25 +104,23 @@ impl TempMail {
         Ok(domains)
     }
 
-    pub async fn get_adresses(count: Option<u32>) -> Result<Vec<String>, String> {
+    pub async fn get_adresses(count: Option<u32>) -> Result<Vec<String>, Error> {
         let count = match count {
             Some(val) => val,
             None => 1,
         };
 
         let response = reqwest::get(format!("{}?action=genRandomMailbox&count={}", API, count))
-            .await
-            .expect("ban")
+            .await?
             .text()
-            .await
-            .expect("ban");
+            .await?;
 
-        let addresses: Vec<String> = serde_json::from_str(&response).expect("ban");
+        let addresses: Vec<String> = serde_json::from_str(&response)?;
 
         Ok(addresses)
     }
 
-    pub async fn check_inbox(&mut self) -> Result<(), reqwest::Error> {
+    pub async fn check_inbox(&mut self) -> Result<(), Error> {
         let auth: Vec<&str> = self.email.split('@').collect();
         let response = reqwest::get(format!(
             "{}?action=getMessages&login={}&domain={}",
@@ -137,7 +135,15 @@ impl TempMail {
         Ok(())
     }
 
-    pub async fn get_message_by_id(&mut self, id: usize) -> Result<Message, reqwest::Error> {
+    pub async fn get_message_by_id(&mut self, id: usize) -> Result<Message, Error> {
+        let mut present = false;
+        for message in &self.mail_messages {
+            if message.id == id {
+                present = true;
+            }
+        }
+
+        //if present {
         let auth: Vec<&str> = self.email.split('@').collect();
         let response = self
             .client
@@ -146,13 +152,13 @@ impl TempMail {
                 API, auth[0], auth[1], id
             ))
             .send()
-            .await?
-            .text()
             .await?;
 
-        let data: Message = serde_json::from_str(&response).unwrap();
-
-        Ok(data)
+        if let Ok(data) = response.json::<Message>().await {
+            return Ok(data);
+        } else {
+            return Err(Error::new("Id not found"));
+        };
     }
 
     pub async fn download_attachment(

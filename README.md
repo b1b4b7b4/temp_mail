@@ -63,7 +63,7 @@ email.download_attachment(message.id, message.attachments[0].filename.clone(),"f
 let domains = TempMail::get_domains().await?;
 ```
 
-## Get random adresses
+## Get random addresses
 
 ```rust
 let adresses = TempMail::get_adresses(Some(10)).await?;
