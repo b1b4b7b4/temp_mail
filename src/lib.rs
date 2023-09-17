@@ -9,7 +9,6 @@ use mailmessage::MailMessage;
 mod error;
 use error::Error;
 mod attachment;
-use attachment::Attachment;
 use futures_util::StreamExt;
 use reqwest::Client;
 use std::{fs::File, io::Write};
@@ -136,14 +135,6 @@ impl TempMail {
     }
 
     pub async fn get_message_by_id(&mut self, id: usize) -> Result<Message, Error> {
-        let mut present = false;
-        for message in &self.mail_messages {
-            if message.id == id {
-                present = true;
-            }
-        }
-
-        //if present {
         let auth: Vec<&str> = self.email.split('@').collect();
         let response = self
             .client
