@@ -1,3 +1,3 @@
 # temp_mail
 
-### Golang wrapper of [1secmail](https://www.1secmail.com/api) 😔
+### Golang wrapper for [1secmail](https://www.1secmail.com/api) 😔
